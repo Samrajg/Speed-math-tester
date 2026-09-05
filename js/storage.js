@@ -84,6 +84,10 @@ const Storage = (function() {
                 data.addition.medium = DEFAULT_ADDITION_SANDBOX_MEDIUM;
                 set(KEYS.SANDBOX, data);
             }
+            if (data.addition.hard.length === 0 && typeof DEFAULT_ADDITION_SANDBOX_HARD !== 'undefined') {
+                data.addition.hard = DEFAULT_ADDITION_SANDBOX_HARD;
+                set(KEYS.SANDBOX, data);
+            }
             
             return data;
         },
