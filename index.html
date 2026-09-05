@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Speed Maths Tester</title>
+    <meta name="description" content="Train your calculation speed with this fast, offline-capable mental maths practice app.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff" id="theme-color-meta">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-light">
+    <header class="app-header">
+        <h1 class="logo" id="nav-home">Speed Maths</h1>
+        <nav class="main-nav">
+            <button id="nav-stats" class="nav-btn" aria-label="Statistics">📊</button>
+            <button id="nav-history" class="nav-btn" aria-label="History">🕒</button>
+            <button id="nav-settings" class="nav-btn" aria-label="Settings">⚙️</button>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <!-- Install Prompt Banner -->
+        <div id="install-banner" class="install-banner hidden">
+            <span>Install App for Offline Use</span>
+            <button id="install-btn">Install</button>
+            <button id="dismiss-install-btn" aria-label="Dismiss">✕</button>
+        </div>
+
+        <!-- VIEWS -->
+        
+        <!-- HOME VIEW -->
+        <section id="view-home" class="view active">
+            <div class="hero-section">
+                <h2>Train your calculation speed.</h2>
+                <p>Select an operation to begin.</p>
+            </div>
+            
+            <div class="operations-grid">
+                <button class="operation-card" data-operation="addition">
+                    <span class="op-symbol">+</span>
+                    <span class="op-name">Addition</span>
+                    <span class="op-desc">Practice +</span>
+                </button>
+                <button class="operation-card" data-operation="subtraction">
+                    <span class="op-symbol">−</span>
+                    <span class="op-name">Subtraction</span>
+                    <span class="op-desc">Practice −</span>
+                </button>
+                <button class="operation-card" data-operation="multiplication">
+                    <span class="op-symbol">×</span>
+                    <span class="op-name">Multiplication</span>
+                    <span class="op-desc">Practice ×</span>
+                </button>
+                <button class="operation-card" data-operation="division">
+                    <span class="op-symbol">÷</span>
+                    <span class="op-name">Division</span>
+                    <span class="op-desc">Practice ÷</span>
+                </button>
+            </div>
+            
+            <div class="dashboard-summary" id="dashboard-summary">
+                <!-- Dashboard injected here -->
+            </div>
+        </section>
+
+        <!-- SETUP VIEW -->
+        <section id="view-setup" class="view hidden">
+            <h2 id="setup-title" class="section-title">Setup Test</h2>
+            
+            <div class="setup-form">
+                <div class="setup-group">
+                    <label>Difficulty</label>
+                    <div class="options-row" id="setup-difficulty">
+                        <button class="option-btn selected" data-value="easy">Easy</button>
+                        <button class="option-btn" data-value="medium">Medium</button>
+                        <button class="option-btn" data-value="hard">Hard</button>
+                        <button class="option-btn" data-value="extreme">Extreme</button>
+                    </div>
+                </div>
+                
+                <div class="setup-group">
+                    <label>Number of Questions</label>
+                    <div class="options-row" id="setup-questions">
+                        <button class="option-btn selected" data-value="10">10</button>
+                        <button class="option-btn" data-value="20">20</button>
+                        <button class="option-btn" data-value="50">50</button>
+                    </div>
+                </div>
+                
+                <div class="setup-group">
+                    <label>Time Mode</label>
+                    <div class="options-row" id="setup-time">
+                        <button class="option-btn selected" data-value="untimed">Untimed</button>
+                        <button class="option-btn" data-value="30">30s</button>
+                        <button class="option-btn" data-value="60">60s</button>
+                        <button class="option-btn" data-value="120">2m</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-row">
+                <button id="btn-back-home" class="btn-secondary">Back</button>
+                <button id="btn-start-test" class="btn-primary">START PRACTICE</button>
+            </div>
+        </section>
+
+        <!-- TEST VIEW -->
+        <section id="view-test" class="view hidden">
+            <div class="test-header">
+                <div class="test-progress">Question <span id="test-q-num">1</span> / <span id="test-q-total">10</span></div>
+                <div class="test-timer" id="test-timer">00:00</div>
+                <div class="test-score">Score: <span id="test-score-val">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div id="question-text" class="question-text">47 × 8 = ?</div>
+            </div>
+            
+            <div class="answer-container">
+                <input type="number" id="answer-input" class="answer-input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">
+                <button id="btn-submit-answer" class="btn-primary btn-submit">SUBMIT</button>
+            </div>
+            
+            <div class="test-actions">
+                <button id="btn-end-test" class="btn-text">End Test Early</button>
+            </div>
+        </section>
+
+        <!-- RESULT VIEW -->
+        <section id="view-result" class="view hidden">
+            <div class="result-card">
+                <h2>TEST COMPLETE 🎉</h2>
+                <div class="result-score-main">
+                    <span id="res-correct">18</span> / <span id="res-total">20</span>
+                </div>
+                <div class="result-accuracy" id="res-accuracy">90% Accuracy</div>
+                
+                <div class="result-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Average Speed</div>
+                        <div class="stat-value"><span id="res-avg-speed">2.1</span>s</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Fastest Answer</div>
+                        <div class="stat-value"><span id="res-fastest">0.8</span>s</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Time</div>
+                        <div class="stat-value" id="res-total-time">42s</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Questions/Min</div>
+                        <div class="stat-value" id="res-qpm">28.5</div>
+                    </div>
+                </div>
+                
+                <p class="performance-message" id="res-message">Great job!</p>
+            </div>
+            
+            <div class="action-row stacked">
+                <button id="btn-play-again" class="btn-primary">TRY AGAIN</button>
+                <button id="btn-change-mode" class="btn-secondary">CHANGE MODE</button>
+            </div>
+        </section>
+        
+        <!-- HISTORY VIEW -->
+        <section id="view-history" class="view hidden">
+            <h2 class="section-title">Practice History</h2>
+            <div class="history-list" id="history-list">
+                <!-- History items injected here -->
+            </div>
+            <div class="action-row">
+                <button id="btn-clear-history" class="btn-danger">Clear History</button>
+            </div>
+        </section>
+        
+        <!-- STATISTICS VIEW -->
+        <section id="view-stats" class="view hidden">
+            <h2 class="section-title">Statistics & Personal Best</h2>
+            <div class="stats-container" id="stats-container">
+                <!-- Stats injected here -->
+            </div>
+        </section>
+
+        <!-- SETTINGS VIEW -->
+        <section id="view-settings" class="view hidden">
+            <h2 class="section-title">Settings</h2>
+            <div class="settings-form">
+                <div class="setting-item">
+                    <label for="setting-theme">Theme</label>
+                    <select id="setting-theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JS -->
+    <script src="js/storage.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
