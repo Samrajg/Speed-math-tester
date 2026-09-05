@@ -88,6 +88,10 @@ const Storage = (function() {
                 data.addition.hard = DEFAULT_ADDITION_SANDBOX_HARD;
                 set(KEYS.SANDBOX, data);
             }
+            if (data.subtraction.easy.length === 0 && typeof DEFAULT_SUBTRACTION_SANDBOX_EASY !== 'undefined') {
+                data.subtraction.easy = DEFAULT_SUBTRACTION_SANDBOX_EASY;
+                set(KEYS.SANDBOX, data);
+            }
             
             return data;
         },
