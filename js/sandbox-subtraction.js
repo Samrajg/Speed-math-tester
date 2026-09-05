@@ -1,4 +1,5 @@
-const DEFAULT_SUBTRACTION_SANDBOX_EASY = [
+const SANDBOX_SUBTRACTION = {
+  easy: [
   { "text": "25 - 12 = ?", "answer": 13 },
   { "text": "34 - 11 = ?", "answer": 23 },
   { "text": "47 - 23 = ?", "answer": 24 },
@@ -249,4 +250,8 @@ const DEFAULT_SUBTRACTION_SANDBOX_EASY = [
   { "text": "78 - 23 = ?", "answer": 55 },
   { "text": "53 - 12 = ?", "answer": 41 },
   { "text": "91 - 35 = ?", "answer": 56 }
-];
+],
+  medium: [],
+  hard: [],
+  extreme: []
+};
