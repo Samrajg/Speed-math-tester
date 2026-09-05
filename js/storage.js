@@ -8,7 +8,8 @@ const Storage = (function() {
         HISTORY: 'speedMathHistory',
         STATS: 'speedMathStats',
         BESTS: 'speedMathBestScores',
-        STREAK: 'speedMathStreak'
+        STREAK: 'speedMathStreak',
+        SANDBOX: 'speedMathSandbox'
     };
 
     const DEFAULT_SETTINGS = {
@@ -44,7 +45,6 @@ const Storage = (function() {
         saveTestToHistory: (testResult) => {
             const history = get(KEYS.HISTORY, []);
             history.unshift(testResult); // Add to beginning
-            // Keep only last 100 to avoid bloat
             if (history.length > 100) history.pop();
             set(KEYS.HISTORY, history);
         },
@@ -54,6 +54,29 @@ const Storage = (function() {
         saveBests: (bests) => set(KEYS.BESTS, bests),
 
         getStreak: () => get(KEYS.STREAK, { current: 0, lastDate: null }),
-        saveStreak: (streak) => set(KEYS.STREAK, streak)
+        saveStreak: (streak) => set(KEYS.STREAK, streak),
+        
+        getSandbox: () => {
+            const data = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
+            if (data.addition.length === 0 && typeof DEFAULT_ADDITION_SANDBOX !== 'undefined') {
+                data.addition = DEFAULT_ADDITION_SANDBOX;
+                set(KEYS.SANDBOX, data);
+            }
+            return data;
+        },
+        saveSandbox: (sandbox) => set(KEYS.SANDBOX, sandbox),
+        addSandboxQuestion: (op, question) => {
+            const sb = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
+            if (!sb[op]) sb[op] = [];
+            sb[op].push(question);
+            set(KEYS.SANDBOX, sb);
+        },
+        removeSandboxQuestion: (op, index) => {
+            const sb = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
+            if (sb[op] && sb[op][index]) {
+                sb[op].splice(index, 1);
+                set(KEYS.SANDBOX, sb);
+            }
+        }
     };
 })();

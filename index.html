@@ -20,6 +20,7 @@
         <nav class="main-nav">
             <button id="nav-stats" class="nav-btn" aria-label="Statistics">📊</button>
             <button id="nav-history" class="nav-btn" aria-label="History">🕒</button>
+            <button id="nav-sandbox" class="nav-btn" aria-label="Sandbox">🛠️</button>
             <button id="nav-settings" class="nav-btn" aria-label="Settings">⚙️</button>
         </nav>
     </header>
@@ -81,6 +82,7 @@
                         <button class="option-btn" data-value="medium">Medium</button>
                         <button class="option-btn" data-value="hard">Hard</button>
                         <button class="option-btn" data-value="extreme">Extreme</button>
+                        <button class="option-btn" data-value="sandbox">Sandbox</button>
                     </div>
                 </div>
                 
@@ -188,6 +190,35 @@
             </div>
         </section>
 
+        <!-- SANDBOX VIEW -->
+        <section id="view-sandbox" class="view hidden">
+            <h2 class="section-title">Sandbox (Custom Questions)</h2>
+            <div class="setup-form">
+                <div class="setup-group">
+                    <label>Operation to Edit</label>
+                    <select id="sandbox-op-select" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem; width: 100%;">
+                        <option value="addition">Addition</option>
+                        <option value="subtraction">Subtraction</option>
+                        <option value="multiplication">Multiplication</option>
+                        <option value="division">Division</option>
+                    </select>
+                </div>
+                
+                <div class="setup-group">
+                    <label>Add Question</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="text" id="sb-q-text" placeholder="e.g. 15 + 25 = ?" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem;">
+                        <input type="number" id="sb-q-answer" placeholder="Ans" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem; width: 100px;">
+                        <button id="btn-add-sb" class="btn-primary" style="padding: 0.5rem 1rem;">Add</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-list" id="sandbox-list">
+                <!-- Sandbox items injected here -->
+            </div>
+        </section>
+
         <!-- SETTINGS VIEW -->
         <section id="view-settings" class="view hidden">
             <h2 class="section-title">Settings</h2>
@@ -204,6 +235,7 @@
     </main>
 
     <!-- JS -->
+    <script src="js/sandbox-data.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/questions.js"></script>

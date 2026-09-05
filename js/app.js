@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navStats = document.getElementById('nav-stats');
     const navHistory = document.getElementById('nav-history');
     const navSettings = document.getElementById('nav-settings');
+    const navSandbox = document.getElementById('nav-sandbox');
     
     // Setup
     const setupDifficultyBtns = document.querySelectorAll('#setup-difficulty .option-btn');
@@ -41,6 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const qText = document.getElementById('question-text');
     const ansInput = document.getElementById('answer-input');
     const btnSubmitAns = document.getElementById('btn-submit-answer');
+    
+    // Sandbox
+    const sbOpSelect = document.getElementById('sandbox-op-select');
+    const sbQText = document.getElementById('sb-q-text');
+    const sbQAns = document.getElementById('sb-q-answer');
+    const btnAddSb = document.getElementById('btn-add-sb');
+    const sbList = document.getElementById('sandbox-list');
     
     // --- Initialization ---
     initTheme();
@@ -79,6 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (testState.isActive) return;
         renderHistory();
         switchView('view-history');
+    });
+    
+    navSandbox.addEventListener('click', () => {
+        if (testState.isActive) return;
+        renderSandbox();
+        switchView('view-sandbox');
     });
     
     navSettings.addEventListener('click', () => {
@@ -124,6 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Test Logic ---
     function startTest() {
+        if (settings.difficulty === 'sandbox') {
+            const sb = Storage.getSandbox();
+            if (!sb[currentOperation] || sb[currentOperation].length === 0) {
+                alert(`No custom questions found for ${capitalize(currentOperation)} in Sandbox mode! Add some first.`);
+                return;
+            }
+        }
+
         switchView('view-test');
         
         testState = {
@@ -388,6 +410,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         container.appendChild(grid);
     }
+
+    // --- Sandbox UI Logic ---
+    function renderSandbox() {
+        const op = sbOpSelect.value;
+        const sb = Storage.getSandbox();
+        const list = sb[op] || [];
+        
+        sbList.innerHTML = '';
+        if (list.length === 0) {
+            sbList.innerHTML = '<p>No custom questions added for this operation yet.</p>';
+            return;
+        }
+        
+        list.forEach((q, idx) => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `
+                <div class="history-main">
+                    <span class="history-title">${q.text}</span>
+                </div>
+                <div class="history-score" style="display:flex; gap: 1rem; align-items:center;">
+                    <div class="history-score-val">Ans: ${q.answer}</div>
+                    <button class="btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-idx="${idx}">Delete</button>
+                </div>
+            `;
+            sbList.appendChild(div);
+        });
+        
+        // Add delete listeners
+        sbList.querySelectorAll('.btn-danger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = e.target.dataset.idx;
+                Storage.removeSandboxQuestion(op, idx);
+                renderSandbox();
+            });
+        });
+    }
+
+    sbOpSelect.addEventListener('change', renderSandbox);
+
+    btnAddSb.addEventListener('click', () => {
+        const text = sbQText.value.trim();
+        const ans = parseInt(sbQAns.value, 10);
+        if (!text || isNaN(ans)) {
+            alert('Please enter a valid question and numerical answer.');
+            return;
+        }
+        Storage.addSandboxQuestion(sbOpSelect.value, { text: text, answer: ans });
+        sbQText.value = '';
+        sbQAns.value = '';
+        renderSandbox();
+    });
 
     // Utils
     function capitalize(str) {

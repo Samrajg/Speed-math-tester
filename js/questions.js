@@ -92,6 +92,14 @@ const Questions = (function() {
 
     return {
         generate: function(operation, difficulty) {
+            if (difficulty === 'sandbox') {
+                const sb = Storage.getSandbox();
+                const qList = sb[operation] || [];
+                if (qList.length === 0) {
+                    return { text: "No custom Qs!", answer: 0, isError: true };
+                }
+                return qList[getRandomInt(0, qList.length - 1)];
+            }
             switch(operation) {
                 case 'addition': return generateAddition(difficulty);
                 case 'subtraction': return generateSubtraction(difficulty);
