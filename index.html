@@ -76,13 +76,20 @@
             
             <div class="setup-form">
                 <div class="setup-group">
+                    <label>Question Source</label>
+                    <div class="options-row" id="setup-source">
+                        <button class="option-btn selected" data-value="auto">Auto-Generate</button>
+                        <button class="option-btn" data-value="sandbox">Custom Sandbox</button>
+                    </div>
+                </div>
+
+                <div class="setup-group">
                     <label>Difficulty</label>
                     <div class="options-row" id="setup-difficulty">
                         <button class="option-btn selected" data-value="easy">Easy</button>
                         <button class="option-btn" data-value="medium">Medium</button>
                         <button class="option-btn" data-value="hard">Hard</button>
                         <button class="option-btn" data-value="extreme">Extreme</button>
-                        <button class="option-btn" data-value="sandbox">Sandbox</button>
                     </div>
                 </div>
                 
@@ -194,14 +201,25 @@
         <section id="view-sandbox" class="view hidden">
             <h2 class="section-title">Sandbox (Custom Questions)</h2>
             <div class="setup-form">
-                <div class="setup-group">
-                    <label>Operation to Edit</label>
-                    <select id="sandbox-op-select" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem; width: 100%;">
-                        <option value="addition">Addition</option>
-                        <option value="subtraction">Subtraction</option>
-                        <option value="multiplication">Multiplication</option>
-                        <option value="division">Division</option>
-                    </select>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="setup-group" style="flex: 1;">
+                        <label>Operation</label>
+                        <select id="sandbox-op-select" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem; width: 100%;">
+                            <option value="addition">Addition</option>
+                            <option value="subtraction">Subtraction</option>
+                            <option value="multiplication">Multiplication</option>
+                            <option value="division">Division</option>
+                        </select>
+                    </div>
+                    <div class="setup-group" style="flex: 1;">
+                        <label>Difficulty Level</label>
+                        <select id="sandbox-diff-select" class="answer-input" style="font-size: 1.2rem; padding: 0.5rem; width: 100%;">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                            <option value="extreme">Extreme</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="setup-group">
@@ -236,6 +254,7 @@
 
     <!-- JS -->
     <script src="js/sandbox-data.js"></script>
+    <script src="js/sandbox-data-medium.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/questions.js"></script>

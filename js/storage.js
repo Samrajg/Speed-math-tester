@@ -37,6 +37,15 @@ const Storage = (function() {
         }
     }
 
+    function getEmptySandbox() {
+        return {
+            addition: { easy: [], medium: [], hard: [], extreme: [] },
+            subtraction: { easy: [], medium: [], hard: [], extreme: [] },
+            multiplication: { easy: [], medium: [], hard: [], extreme: [] },
+            division: { easy: [], medium: [], hard: [], extreme: [] }
+        };
+    }
+
     return {
         getSettings: () => get(KEYS.SETTINGS, DEFAULT_SETTINGS),
         saveSettings: (settings) => set(KEYS.SETTINGS, settings),
@@ -57,24 +66,39 @@ const Storage = (function() {
         saveStreak: (streak) => set(KEYS.STREAK, streak),
         
         getSandbox: () => {
-            const data = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
-            if (data.addition.length === 0 && typeof DEFAULT_ADDITION_SANDBOX !== 'undefined') {
-                data.addition = DEFAULT_ADDITION_SANDBOX;
+            let data = get(KEYS.SANDBOX, getEmptySandbox());
+            // Migration for old array structure
+            if (Array.isArray(data.addition)) {
+                const oldAdd = data.addition;
+                data = getEmptySandbox();
+                data.addition.easy = oldAdd;
                 set(KEYS.SANDBOX, data);
             }
+            
+            // Default injections if empty
+            if (data.addition.easy.length === 0 && typeof DEFAULT_ADDITION_SANDBOX !== 'undefined') {
+                data.addition.easy = DEFAULT_ADDITION_SANDBOX;
+                set(KEYS.SANDBOX, data);
+            }
+            if (data.addition.medium.length === 0 && typeof DEFAULT_ADDITION_SANDBOX_MEDIUM !== 'undefined') {
+                data.addition.medium = DEFAULT_ADDITION_SANDBOX_MEDIUM;
+                set(KEYS.SANDBOX, data);
+            }
+            
             return data;
         },
         saveSandbox: (sandbox) => set(KEYS.SANDBOX, sandbox),
-        addSandboxQuestion: (op, question) => {
-            const sb = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
-            if (!sb[op]) sb[op] = [];
-            sb[op].push(question);
+        addSandboxQuestion: (op, diff, question) => {
+            const sb = Storage.getSandbox();
+            if (!sb[op]) sb[op] = { easy: [], medium: [], hard: [], extreme: [] };
+            if (!sb[op][diff]) sb[op][diff] = [];
+            sb[op][diff].push(question);
             set(KEYS.SANDBOX, sb);
         },
-        removeSandboxQuestion: (op, index) => {
-            const sb = get(KEYS.SANDBOX, { addition: [], subtraction: [], multiplication: [], division: [] });
-            if (sb[op] && sb[op][index]) {
-                sb[op].splice(index, 1);
+        removeSandboxQuestion: (op, diff, index) => {
+            const sb = Storage.getSandbox();
+            if (sb[op] && sb[op][diff] && sb[op][diff][index]) {
+                sb[op][diff].splice(index, 1);
                 set(KEYS.SANDBOX, sb);
             }
         }

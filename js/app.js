@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navSandbox = document.getElementById('nav-sandbox');
     
     // Setup
+    const setupSourceBtns = document.querySelectorAll('#setup-source .option-btn');
     const setupDifficultyBtns = document.querySelectorAll('#setup-difficulty .option-btn');
     const setupQuestionsBtns = document.querySelectorAll('#setup-questions .option-btn');
     const setupTimeBtns = document.querySelectorAll('#setup-time .option-btn');
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sandbox
     const sbOpSelect = document.getElementById('sandbox-op-select');
+    const sbDiffSelect = document.getElementById('sandbox-diff-select');
     const sbQText = document.getElementById('sb-q-text');
     const sbQAns = document.getElementById('sb-q-answer');
     const btnAddSb = document.getElementById('btn-add-sb');
@@ -123,11 +125,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    if (settings.source === undefined) settings.source = 'auto';
+
+    setupOptionGroup(setupSourceBtns, 'source');
     setupOptionGroup(setupDifficultyBtns, 'difficulty');
     setupOptionGroup(setupQuestionsBtns, 'questions');
     setupOptionGroup(setupTimeBtns, 'timeMode');
 
     function applySettingsToSetupUI() {
+        setupSourceBtns.forEach(b => b.classList.toggle('selected', b.dataset.value === settings.source));
         setupDifficultyBtns.forEach(b => b.classList.toggle('selected', b.dataset.value === settings.difficulty));
         setupQuestionsBtns.forEach(b => b.classList.toggle('selected', b.dataset.value === settings.questions));
         setupTimeBtns.forEach(b => b.classList.toggle('selected', b.dataset.value === settings.timeMode));
@@ -138,10 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Test Logic ---
     function startTest() {
-        if (settings.difficulty === 'sandbox') {
+        if (settings.source === 'sandbox') {
             const sb = Storage.getSandbox();
-            if (!sb[currentOperation] || sb[currentOperation].length === 0) {
-                alert(`No custom questions found for ${capitalize(currentOperation)} in Sandbox mode! Add some first.`);
+            const list = sb[currentOperation] && sb[currentOperation][settings.difficulty] ? sb[currentOperation][settings.difficulty] : [];
+            if (list.length === 0) {
+                alert(`No custom questions found for ${capitalize(currentOperation)} (${capitalize(settings.difficulty)}) in Sandbox mode! Add some first.`);
                 return;
             }
         }
@@ -152,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isActive: true,
             operation: currentOperation,
             difficulty: settings.difficulty,
+            source: settings.source,
             targetQuestions: parseInt(settings.questions) || 10,
             timeMode: settings.timeMode,
             questions: [],
@@ -186,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const q = Questions.generate(testState.operation, testState.difficulty);
+        const q = Questions.generate(testState.operation, testState.difficulty, testState.source);
         testState.currentQuestionData = q;
         testState.questionStartTime = Date.now();
         
@@ -414,12 +422,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Sandbox UI Logic ---
     function renderSandbox() {
         const op = sbOpSelect.value;
+        const diff = sbDiffSelect.value;
         const sb = Storage.getSandbox();
-        const list = sb[op] || [];
+        const list = sb[op] && sb[op][diff] ? sb[op][diff] : [];
         
         sbList.innerHTML = '';
         if (list.length === 0) {
-            sbList.innerHTML = '<p>No custom questions added for this operation yet.</p>';
+            sbList.innerHTML = `<p>No custom questions added for ${capitalize(op)} - ${capitalize(diff)} yet.</p>`;
             return;
         }
         
@@ -442,13 +451,14 @@ document.addEventListener('DOMContentLoaded', () => {
         sbList.querySelectorAll('.btn-danger').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = e.target.dataset.idx;
-                Storage.removeSandboxQuestion(op, idx);
+                Storage.removeSandboxQuestion(op, diff, idx);
                 renderSandbox();
             });
         });
     }
 
     sbOpSelect.addEventListener('change', renderSandbox);
+    sbDiffSelect.addEventListener('change', renderSandbox);
 
     btnAddSb.addEventListener('click', () => {
         const text = sbQText.value.trim();
@@ -457,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter a valid question and numerical answer.');
             return;
         }
-        Storage.addSandboxQuestion(sbOpSelect.value, { text: text, answer: ans });
+        Storage.addSandboxQuestion(sbOpSelect.value, sbDiffSelect.value, { text: text, answer: ans });
         sbQText.value = '';
         sbQAns.value = '';
         renderSandbox();

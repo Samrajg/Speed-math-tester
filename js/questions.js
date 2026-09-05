@@ -91,10 +91,10 @@ const Questions = (function() {
     }
 
     return {
-        generate: function(operation, difficulty) {
-            if (difficulty === 'sandbox') {
+        generate: function(operation, difficulty, source) {
+            if (source === 'sandbox') {
                 const sb = Storage.getSandbox();
-                const qList = sb[operation] || [];
+                const qList = sb[operation] && sb[operation][difficulty] ? sb[operation][difficulty] : [];
                 if (qList.length === 0) {
                     return { text: "No custom Qs!", answer: 0, isError: true };
                 }
