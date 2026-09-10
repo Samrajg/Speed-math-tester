@@ -77,6 +77,11 @@
                     <span class="op-name">Division</span>
                     <span class="op-desc">Practice ÷</span>
                 </button>
+                <button class="operation-card" data-operation="percentages">
+                    <span class="op-symbol">%</span>
+                    <span class="op-name">Percentages</span>
+                    <span class="op-desc">Fraction conversions</span>
+                </button>
                 <button class="operation-card operation-card-mixed" data-operation="mixed">
                     <span class="op-symbol">∞</span>
                     <span class="op-name">Mixed</span>
@@ -155,8 +160,8 @@
             </div>
 
             <div class="answer-container">
-                <input type="tel" id="answer-input" class="answer-input"
-                       inputmode="numeric" pattern="[0-9]*"
+                <input type="number" step="any" id="answer-input" class="answer-input"
+                       inputmode="decimal"
                        autocomplete="off" placeholder="?" aria-label="Your answer">
                 <button id="btn-submit-answer" class="btn-primary btn-submit">SUBMIT</button>
             </div>
@@ -249,6 +254,7 @@
                             <option value="subtraction">Subtraction</option>
                             <option value="multiplication">Multiplication</option>
                             <option value="division">Division</option>
+                            <option value="percentages">Percentages</option>
                         </select>
                     </div>
                     <div class="setup-group" style="flex:1;">
@@ -267,7 +273,7 @@
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <input type="text" id="sb-q-text" placeholder="e.g. 15 + 25 = ?"
                                class="answer-input" style="font-size:1.1rem; padding:0.5rem;">
-                        <input type="tel" id="sb-q-answer" placeholder="Ans" class="answer-input" inputmode="numeric" pattern="[0-9]*" style="font-size: 1.2rem; padding: 0.5rem; width: 100px;">
+                        <input type="number" step="any" id="sb-q-answer" placeholder="Ans" class="answer-input" inputmode="decimal" style="font-size: 1.2rem; padding: 0.5rem; width: 100px;">
                         <button id="btn-add-sb" class="btn-primary" style="padding:0.5rem 1rem;">Add</button>
                     </div>
                 </div>
@@ -319,6 +325,8 @@
     <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
     <!-- JS — order matters: modal/sounds/achievements before storage/statistics -->
+    <script src="js/fractions-data.js"></script>
+    <script src="js/sandbox-addition.js"></script>
     <script src="js/modal.js"></script>
     <script src="js/sounds.js"></script>
     <script src="js/achievements.js"></script>

@@ -46,6 +46,12 @@ const Storage = (function () {
             medium:  [{text:'91 ÷ 7 = ?',answer:13},{text:'120 ÷ 8 = ?',answer:15},{text:'108 ÷ 9 = ?',answer:12},{text:'143 ÷ 11 = ?',answer:13},{text:'84 ÷ 6 = ?',answer:14}],
             hard:    [{text:'408 ÷ 12 = ?',answer:34},{text:'405 ÷ 15 = ?',answer:27},{text:'473 ÷ 11 = ?',answer:43},{text:'728 ÷ 13 = ?',answer:56},{text:'646 ÷ 17 = ?',answer:38}],
             extreme: [{text:'2881 ÷ 43 = ?',answer:67},{text:'4984 ÷ 56 = ?',answer:89},{text:'2736 ÷ 38 = ?',answer:72},{text:'3618 ÷ 54 = ?',answer:67},{text:'6557 ÷ 79 = ?',answer:83}]
+        },
+        percentages: {
+            easy:    [{text:'1/2 = ? %',answer:50},{text:'1/4 = ? %',answer:25},{text:'3/4 = ? %',answer:75},{text:'1/5 = ? %',answer:20},{text:'1/10 = ? %',answer:10}],
+            medium:  [{text:'1/3 = ? %',answer:33.33},{text:'2/3 = ? %',answer:66.67},{text:'1/8 = ? %',answer:12.5},{text:'3/8 = ? %',answer:37.5},{text:'5/8 = ? %',answer:62.5}],
+            hard:    [{text:'1/6 = ? %',answer:16.67},{text:'5/6 = ? %',answer:83.33},{text:'1/7 = ? %',answer:14.29},{text:'1/9 = ? %',answer:11.11},{text:'1/12 = ? %',answer:8.33}],
+            extreme: [{text:'1/11 = ? %',answer:9.09},{text:'1/16 = ? %',answer:6.25},{text:'1/24 = ? %',answer:4.17},{text:'5/12 = ? %',answer:41.67},{text:'7/12 = ? %',answer:58.33}]
         }
     };
 
@@ -73,7 +79,8 @@ const Storage = (function () {
             addition:       { easy: [], medium: [], hard: [], extreme: [] },
             subtraction:    { easy: [], medium: [], hard: [], extreme: [] },
             multiplication: { easy: [], medium: [], hard: [], extreme: [] },
-            division:       { easy: [], medium: [], hard: [], extreme: [] }
+            division:       { easy: [], medium: [], hard: [], extreme: [] },
+            percentages:    { easy: [], medium: [], hard: [], extreme: [] }
         };
     }
 
@@ -102,14 +109,14 @@ const Storage = (function () {
 
             if (!data) {
                 // First launch — seed with compact defaults
-                data = getEmptySandbox();
-                Object.keys(DEFAULT_SANDBOX).forEach(op => {
-                    Object.keys(DEFAULT_SANDBOX[op]).forEach(diff => {
-                        data[op][diff] = [...DEFAULT_SANDBOX[op][diff]];
-                    });
-                });
+                data = DEFAULT_SANDBOX;
                 set(KEYS.SANDBOX, data);
-                return data;
+            } else {
+                // Migration: Ensure percentages exist
+                if (!data.percentages) {
+                    data.percentages = { easy: [], medium: [], hard: [], extreme: [] };
+                    set(KEYS.SANDBOX, data);
+                }
             }
 
             // Migration: old array structure (addition was a flat array)

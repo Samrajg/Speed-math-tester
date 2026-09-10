@@ -74,7 +74,7 @@ const Questions = (function () {
         return { text: `${divisor * answer} ÷ ${divisor} = ?`, answer };
     }
 
-    const OPERATIONS = ['addition', 'subtraction', 'multiplication', 'division'];
+    const OPERATIONS = ['addition', 'subtraction', 'multiplication', 'division', 'percentages'];
 
     function generateForOp(operation, difficulty) {
         switch (operation) {
@@ -82,6 +82,9 @@ const Questions = (function () {
             case 'subtraction':    return generateSubtraction(difficulty);
             case 'multiplication': return generateMultiplication(difficulty);
             case 'division':       return generateDivision(difficulty);
+            case 'percentages':    
+                const q = FRACTION_PERCENTAGES[ri(0, FRACTION_PERCENTAGES.length - 1)];
+                return { text: `${q.text} = ? %`, answer: q.answer };
             default:               return generateAddition(difficulty);
         }
     }
@@ -94,14 +97,14 @@ const Questions = (function () {
             // Sandbox mode: pick a random question from custom list
             if (source === 'sandbox') {
                 const sb    = Storage.getSandbox();
-                const op    = operation === 'mixed' ? OPERATIONS[ri(0, 3)] : operation;
+                const op    = operation === 'mixed' ? OPERATIONS[ri(0, 4)] : operation;
                 const qList = sb[op]?.[difficulty] || [];
                 if (qList.length === 0) return { text: 'No custom Qs!', answer: 0, isError: true };
                 return { ...qList[ri(0, qList.length - 1)], operation: op };
             }
 
             // Auto-generate with deduplication (up to 10 retries)
-            const op = operation === 'mixed' ? OPERATIONS[ri(0, 3)] : operation;
+            const op = operation === 'mixed' ? OPERATIONS[ri(0, 4)] : operation;
             let q, attempts = 0;
             do {
                 q = generateForOp(op, difficulty);

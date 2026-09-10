@@ -264,8 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = skipped ? '' : ansInput.value.trim();
         if (!skipped && val === '') return;
 
-        const userAnswer   = skipped ? null : parseInt(val, 10);
-        const correct      = !skipped && userAnswer === testState.currentQuestionData.answer;
+        const userAnswer   = skipped ? null : parseFloat(val);
+        const isDecimal    = !skipped && testState.currentQuestionData.answer % 1 !== 0;
+        const correct      = !skipped && (isDecimal 
+                                ? Math.abs(userAnswer - testState.currentQuestionData.answer) < 0.001 
+                                : userAnswer === testState.currentQuestionData.answer);
         const responseTime = Date.now() - testState.questionStartTime;
 
         if (correct) {
@@ -296,8 +299,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-advance: if setting is on, auto-submit when user types the correct answer
     ansInput.addEventListener('input', () => {
         if (!settings.autoAdvance || !testState.isActive) return;
-        const val = parseInt(ansInput.value, 10);
-        if (!isNaN(val) && val === testState.currentQuestionData?.answer) {
+        const val = parseFloat(ansInput.value);
+        if (isNaN(val)) return;
+        
+        const isDecimal = testState.currentQuestionData?.answer % 1 !== 0;
+        const correct = isDecimal 
+            ? Math.abs(val - testState.currentQuestionData?.answer) < 0.001 
+            : val === testState.currentQuestionData?.answer;
+            
+        if (correct) {
             submitAnswer();
         }
     });
